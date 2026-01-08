@@ -27,7 +27,7 @@ export default function CreatePostModal() {
 
       {isOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white w-full max-w-md rounded-lg p-6">
+          <div className="bg-white w-full max-w-lg rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Create New Blog</h2>
 
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
