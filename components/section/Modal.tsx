@@ -1,10 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
+type Inputs = {
+  title: string;
+  content: string;
+};
 export default function CreatePostModal() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { register, handleSubmit, reset } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    setIsOpen(false);
+    reset();
+  };
 
   return (
     <>
@@ -17,13 +30,14 @@ export default function CreatePostModal() {
           <div className="bg-white w-full max-w-md rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Create New Blog</h2>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <label className="block mb-1 font-medium">Title</label>
-                <input
+                <Input
                   type="text"
-                  value="title"
                   className="w-full border rounded p-2"
+                  placeholder="Title"
+                  {...register("title", { required: true })}
                   required
                 />
               </div>
@@ -31,9 +45,9 @@ export default function CreatePostModal() {
               <div>
                 <label className="block mb-1 font-medium">Content</label>
                 <textarea
-                  value={"content"}
-                  // onChange={(e) => setContent(e.target.value)}
                   className="w-full border rounded p-2"
+                  placeholder="Content"
+                  {...register("content", { required: true })}
                   rows={4}
                   required
                 />

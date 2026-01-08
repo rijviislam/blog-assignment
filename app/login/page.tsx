@@ -12,11 +12,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type Inputs = {
+  email: string;
+  password: string;
+};
 
 export default function LoginPage() {
+  const { register, handleSubmit, reset } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    reset();
+  };
   return (
-    <div className=" h-screen w-full flex items-center justify-center">
-      <Card className="w-full max-w-sm">
+    <div className=" w-full flex items-center justify-center">
+      <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -29,7 +40,7 @@ export default function LoginPage() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -37,7 +48,7 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  {...register("email", { required: true })}
                 />
               </div>
               <div className="grid gap-2">
@@ -50,19 +61,30 @@ export default function LoginPage() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                />
               </div>
             </div>
+
+            <CardFooter className="flex-col gap-2 p-0 mt-5">
+              <Button type="submit" className="w-full cursor-pointer">
+                Login
+              </Button>
+              <Button variant="outline" className="w-full cursor-pointer">
+                Login with Google
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
