@@ -61,7 +61,14 @@ export default function BlogDetails() {
       .toUpperCase()} ${date.getFullYear()}`;
   };
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
+  if (loading)
+    return (
+      <div className="text-center py-20">
+        <div className="flex justify-center items-center h-100">
+          <span className="loader border-4 border-t-purple-500 border-gray-200 rounded-full w-12 h-12 animate-spin"></span>
+        </div>
+      </div>
+    );
   if (error)
     return <div className="text-center py-20 text-red-500">{error}</div>;
   if (!post) return <div className="text-center py-20">Post not found.</div>;
