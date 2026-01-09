@@ -1,3 +1,5 @@
+"use client";
+import { useUser } from "@/context/UserContext";
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -50,11 +52,12 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 export default function Nav() {
+  const { user, logout } = useUser();
+
   return (
     <div className="flex items-center justify-between m-10 ">
-      <Link href="/">
-        {/* <Image src={Logo} alt="logo" width={40} height={40} /> */}
-      </Link>
+      <Link href="/">Home</Link>
+
       <NavigationMenu>
         <NavigationMenuList className="flex-wrap">
           <NavigationMenuItem>
@@ -192,9 +195,21 @@ export default function Nav() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <Button className="bg-purple-300 text-black font-bold hover:bg-purple-200">
-        <Link href="/login">Login</Link>
-      </Button>
+
+      {user ? (
+        <div className="flex items-center gap-4">
+          <Button
+            className="bg-red-500 cursor-pointer hover:bg-red-600"
+            onClick={logout} // ✅ Call correct logout function
+          >
+            Logout
+          </Button>
+        </div>
+      ) : (
+        <Button className="bg-purple-300 text-black font-bold hover:bg-purple-200">
+          <Link href="/login">Login</Link>
+        </Button>
+      )}
     </div>
   );
 }

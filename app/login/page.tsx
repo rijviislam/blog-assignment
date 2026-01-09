@@ -30,6 +30,7 @@ export default function LoginPage() {
     try {
       const response = await fetch("/api/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -37,6 +38,8 @@ export default function LoginPage() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
+
+      console.log(result);
 
       if (response.ok) {
         setMessage("Login successful! Redirecting...");
