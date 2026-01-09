@@ -62,7 +62,7 @@ export default function BlogGrid() {
     <div className="flex justify-center px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-[1200px]">
         {blogs.map((blog) => (
-          <Link key={blog.id} href={`/blog/${blog.id}`} className="w-full">
+          <Link key={blog.id} href={`/posts/${blog.id}`} className="w-full">
             <Card className="h-[400px] flex flex-col bg-purple-100 overflow-hidden">
               <CardHeader className="flex flex-col h-full p-4 justify-between">
                 <CardTitle className="text-xl font-bold line-clamp-1 mb-2">
