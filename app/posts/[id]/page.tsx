@@ -9,7 +9,7 @@ interface User {
   name: string;
 }
 
-interface Comment {
+interface CommentType {
   id: number;
   post_id: number;
   user_id: number;
@@ -25,7 +25,7 @@ interface Blog {
   created_at: string;
   updated_at: string;
   user: User;
-  comments: Comment[];
+  comments: CommentType[];
 }
 
 export default function BlogDetails() {
@@ -35,24 +35,23 @@ export default function BlogDetails() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // FETCH POST
+  const fetchPost = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/posts/${postId}`);
+      if (!res.ok) throw new Error(`Post not found (${res.status})`);
+      const data = await res.json();
+      setPost(data);
+    } catch (err: any) {
+      console.error("Failed to fetch post:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!postId) return;
-
-    const fetchPost = async () => {
-      try {
-        const res = await fetch(`/api/posts/${postId}`);
-        if (!res.ok) throw new Error(`Post not found (${res.status})`);
-        const data = await res.json();
-        setPost(data);
-      } catch (err: any) {
-        console.error("Failed to fetch post:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPost();
   }, [postId]);
 
@@ -78,18 +77,8 @@ export default function BlogDetails() {
 
       <h2 className="text-2xl font-semibold mb-4">Comments</h2>
 
-      <Comment />
-
-      {post.comments.length === 0 && <p>No comments yet.</p>}
-      <ul>
-        {post.comments.map((c) => (
-          <li key={c.id} className="mb-4 border-b pb-2">
-            <p className="font-semibold">{c.user.name}</p>
-            <p>{c.content}</p>
-            <small className="text-gray-500">{formatDate(c.created_at)}</small>
-          </li>
-        ))}
-      </ul>
+      {/* Comment component */}
+      <Comment comments={post.comments} onCommentChange={fetchPost} />
     </div>
   );
 }

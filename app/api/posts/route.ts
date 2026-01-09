@@ -11,10 +11,10 @@ export async function GET() {
     }
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });
-  } catch (err: any) {
-    console.error("API /api/posts error:", err);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error("error");
     return NextResponse.json(
-      { message: err.message || "Internal server error" },
+      { message: error.message || "Internal server error" },
       { status: 500 }
     );
   }

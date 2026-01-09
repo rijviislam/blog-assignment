@@ -17,12 +17,28 @@ interface Comment {
   user: User;
 }
 
-export default function Comment() {
+interface CommentProps {
+  comments?: Comment[];
+  onCommentChange?: () => void;
+}
+
+export default function Comment({
+  comments = [],
+  onCommentChange,
+}: CommentProps) {
   const params = useParams();
   const { user, token } = useUser();
   const postId = params.id;
   const [commentContent, setCommentContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${date.getDate()} ${date
+      .toLocaleString("en-US", { month: "long" })
+      .toUpperCase()} ${date.getFullYear()}`;
+  };
 
   const handleCommentSubmit = async () => {
     if (!user || !token) {
@@ -53,7 +69,14 @@ export default function Comment() {
       const data = await res.json();
 
       setCommentContent("");
-      return data;
+      alert("Comment posted successfully!");
+
+      // Refresh the page or call callback to reload comments
+      if (onCommentChange) {
+        onCommentChange();
+      } else {
+        window.location.reload();
+      }
     } catch (err: any) {
       console.error("Failed to post comment:", err);
       alert(err.message || "Failed to post comment");
@@ -62,8 +85,52 @@ export default function Comment() {
     }
   };
 
+  const handleDeleteComment = async (commentId: number) => {
+    if (!token) {
+      alert("Please log in to delete comments");
+      return;
+    }
+
+    if (!confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+
+    setDeletingId(commentId);
+
+    try {
+      const res = await fetch(`/api/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res
+          .json()
+          .catch(() => ({ message: "Failed to delete comment" }));
+        throw new Error(errorData.message || "Failed to delete comment");
+      }
+
+      alert("Comment deleted successfully!");
+
+      // Refresh the page or call callback to reload comments
+      if (onCommentChange) {
+        onCommentChange();
+      } else {
+        window.location.reload();
+      }
+    } catch (err: any) {
+      console.error("Failed to delete comment:", err);
+      alert(err.message || "Failed to delete comment");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div>
+      {/* Comment Input */}
       {user && token ? (
         <div className="mb-6 flex flex-col gap-2">
           <textarea
@@ -84,6 +151,38 @@ export default function Comment() {
         </div>
       ) : (
         <p className="mb-6 text-gray-500">Please log in to post a comment.</p>
+      )}
+
+      {/* Comments List */}
+      {comments.length === 0 ? (
+        <p className="text-gray-500">No comments yet.</p>
+      ) : (
+        <ul className="space-y-4">
+          {comments.map((c) => (
+            <li key={c.id} className="border-b pb-4">
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900">{c.user.name}</p>
+                  <p className="mt-1 text-gray-700">{c.content}</p>
+                  <small className="text-gray-500 text-xs mt-2 block">
+                    {formatDate(c.created_at)}
+                  </small>
+                </div>
+
+                {/* Delete button - only show if current user is the comment author */}
+                {user && user.id === c.user_id && (
+                  <button
+                    onClick={() => handleDeleteComment(c.id)}
+                    disabled={deletingId === c.id}
+                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    {deletingId === c.id ? "Deleting..." : "Delete"}
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

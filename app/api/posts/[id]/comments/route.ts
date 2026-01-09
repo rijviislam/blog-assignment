@@ -49,10 +49,10 @@ export async function POST(
 
     const data = await res.json();
     return NextResponse.json(data, { status: 201 });
-  } catch (err: any) {
-    console.error("API /api/posts/[id]/comments error:", err);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error("error");
     return NextResponse.json(
-      { message: err.message || "Internal server error" },
+      { message: error.message || "Internal server error" },
       { status: 500 }
     );
   }

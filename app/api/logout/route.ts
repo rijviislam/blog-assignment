@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
     const data = await res.json();
 
     return NextResponse.json(data, { status: res.status });
-  } catch (err: any) {
-    console.error("API /api/logout error:", err);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(" error");
     return NextResponse.json(
-      { message: err.message || "Logout failed" },
+      { message: error.message || "Logout fail" },
       { status: 500 }
     );
   }

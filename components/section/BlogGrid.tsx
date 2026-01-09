@@ -53,8 +53,7 @@ export default function BlogGrid() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[400px]">
-        {/* spinner */}
+      <div className="flex justify-center items-center h-100">
         <span className="loader border-4 border-t-purple-500 border-gray-200 rounded-full w-12 h-12 animate-spin"></span>
       </div>
     );
@@ -62,19 +61,19 @@ export default function BlogGrid() {
 
   return (
     <div className="flex justify-center px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-[1200px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-300">
         {blogs.map((blog) => {
           const href = user ? `/posts/${blog.id}` : `/login`;
 
           return (
             <Link key={blog.id} href={href} className="w-full">
-              <Card className="h-[400px] flex flex-col bg-purple-100 overflow-hidden">
+              <Card className="h-100 flex flex-col bg-purple-100 overflow-hidden">
                 <CardHeader className="flex flex-col h-full p-4 justify-between">
                   <CardTitle className="text-xl font-bold line-clamp-1 mb-2">
                     {blog.title}
                   </CardTitle>
 
-                  <CardDescription className="text-base mb-2 line-clamp-[12]">
+                  <CardDescription className="text-base mb-2 line-clamp-12">
                     {blog.content}
                   </CardDescription>
 
