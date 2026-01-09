@@ -10,8 +10,8 @@ export default function Landing() {
       </div>
       <div className="flex items-center justify-center">
         <div className="grid grid-cols-3 place-content-center place-items-center items-center justify-center max-w-300 w-full">
-          <Link href={`/blog/1`} className="w-full  max-w-sm cursor-pointer">
-            <Card className="min-h-100">
+          <Link href={`/blog/1`} className="w-full  max-w-sm cursor-pointer ">
+            <Card className="min-h-100 bg-purple-100">
               <CardHeader>
                 <CardTitle className="text-xl">Login to your account</CardTitle>
                 <CardDescription className="text-base">
@@ -29,7 +29,7 @@ export default function Landing() {
             </Card>
           </Link>
           <Link href={`/blog/2`} className="w-full  max-w-sm cursor-pointer">
-            <Card className="min-h-100">
+            <Card className="min-h-100 bg-purple-100">
               <CardHeader>
                 <CardTitle className="text-xl">Login to your account</CardTitle>
                 <CardDescription className="text-base">
@@ -47,7 +47,7 @@ export default function Landing() {
             </Card>
           </Link>
           <Link href={`/blog/3`} className="w-full  max-w-sm cursor-pointer">
-            <Card className="min-h-100">
+            <Card className="min-h-100 bg-purple-100">
               <CardHeader>
                 <CardTitle className="text-xl">Login to your account</CardTitle>
                 <CardDescription className="text-base">

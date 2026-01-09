@@ -52,9 +52,9 @@ const components: { title: string; href: string; description: string }[] = [
 export default function Nav() {
   return (
     <div className="flex items-center justify-between m-10 ">
-      <h2>
-        <Link href="/">Blog</Link>
-      </h2>
+      <Link href="/">
+        {/* <Image src={Logo} alt="logo" width={40} height={40} /> */}
+      </Link>
       <NavigationMenu>
         <NavigationMenuList className="flex-wrap">
           <NavigationMenuItem>
@@ -192,7 +192,7 @@ export default function Nav() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <Button>
+      <Button className="bg-purple-300 text-black font-bold hover:bg-purple-200">
         <Link href="/login">Login</Link>
       </Button>
     </div>

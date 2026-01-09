@@ -13,15 +13,36 @@ export default function CreatePostModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   const { register, handleSubmit, reset } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
-    setIsOpen(false);
-    reset();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      const response = await fetch("http://exam.kodevite.com/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      console.log("Success:", result);
+      setIsOpen(false);
+      alert("Form submitted successfully!");
+
+      reset();
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Failed to submit form.");
+    }
   };
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} className="cursor-pointer">
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="cursor-pointer bg-purple-300 text-black font-bold hover:bg-purple-200"
+      >
         Create Post
       </Button>
 
