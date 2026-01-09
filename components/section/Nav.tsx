@@ -56,7 +56,37 @@ export default function Nav() {
 
   return (
     <div className="flex items-center justify-between m-10 ">
-      <Link href="/">Home</Link>
+      <Button className="bg-purple-100 text-black font-bold hover:bg-purple-100">
+        <Link href="/">
+          <svg
+            version="1.1"
+            id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 512 512"
+            enableBackground="new 0 0 512 512"
+            xmlSpace="preserve"
+            className="w-10 h-10"
+          >
+            <path
+              fill="#8B5CF6"
+              d="M476.69,194.207h-26.483c-19.47,0-35.31-15.84-35.31-35.31v-17.655
+	C414.897,63.361,351.535,0,273.655,0H141.241C63.36,0,0,63.361,0,141.241v238.345C0,452.599,59.401,512,132.414,512h247.172
+	C452.599,512,512,452.599,512,379.586V229.517C512,210.047,496.16,194.207,476.69,194.207z M176.552,132.414h97.103
+	c19.501,0,35.31,15.809,35.31,35.31s-15.809,35.31-35.31,35.31h-97.103c-19.501,0-35.31-15.809-35.31-35.31
+	S157.05,132.414,176.552,132.414z M326.621,379.586H176.552c-19.501,0-35.31-15.809-35.31-35.31c0-19.501,15.809-35.31,35.31-35.31
+	h150.069c19.501,0,35.31,15.809,35.31,35.31C361.931,363.777,346.122,379.586,326.621,379.586z"
+            />
+            <path
+              fill="#7C3AED"
+              d="M35.31,379.586V141.241C35.31,63.361,98.67,0,176.552,0h-35.31C63.36,0,0,63.361,0,141.241v238.345
+	C0,452.599,59.401,512,132.414,512h35.31C94.711,512,35.31,452.599,35.31,379.586z"
+            />
+          </svg>
+        </Link>
+      </Button>
 
       <NavigationMenu>
         <NavigationMenuList className="flex-wrap">
@@ -188,7 +218,7 @@ export default function Nav() {
         <div className="flex items-center gap-4">
           <Button
             className="bg-red-500 cursor-pointer hover:bg-red-600"
-            onClick={logout} // ✅ Call correct logout function
+            onClick={logout}
           >
             Logout
           </Button>
