@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -18,4 +18,20 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+export async function POST(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+
+  const response = await fetch("http://exam.kodevite.com/api/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: authHeader ?? "",
+    },
+    body: JSON.stringify(await request.json()),
+  });
+
+  const data = await response.json();
+  return NextResponse.json(data, { status: response.status });
 }

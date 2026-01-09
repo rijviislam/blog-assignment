@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
       credentials: "include",
     });
-
+    console.log(response);
     const data = await response.json();
 
     return NextResponse.json(data, { status: response.status });

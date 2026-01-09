@@ -21,15 +21,19 @@ interface Blog {
 
 export default function BlogGrid() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // loading state
 
   const fetchPosts = async () => {
     try {
+      setLoading(true);
       const res = await fetch("/api/posts");
       if (!res.ok) throw new Error(`Error: ${res.status}`);
       const data = await res.json();
       setBlogs(data.data);
     } catch (err) {
       console.error("Failed to fetch posts:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,6 +49,15 @@ export default function BlogGrid() {
     return `${day} ${month} ${year}`;
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        {/* spinner */}
+        <span className="loader border-4 border-t-purple-500 border-gray-200 rounded-full w-12 h-12 animate-spin"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-[1200px]">
@@ -52,7 +65,7 @@ export default function BlogGrid() {
           <Link key={blog.id} href={`/blog/${blog.id}`} className="w-full">
             <Card className="h-[400px] flex flex-col bg-purple-100 overflow-hidden">
               <CardHeader className="flex flex-col h-full p-4 justify-between">
-                <CardTitle className="text-xl font-bold  line-clamp-1 mb-2">
+                <CardTitle className="text-xl font-bold line-clamp-1 mb-2">
                   {blog.title}
                 </CardTitle>
 

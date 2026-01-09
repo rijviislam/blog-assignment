@@ -15,25 +15,26 @@ export default function CreatePostModal() {
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const response = await fetch("http://exam.kodevite.com/api/posts", {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
+      console.log(response);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
       console.log("Success:", result);
       setIsOpen(false);
-      alert("Form submitted successfully!");
 
       reset();
     } catch (err) {
       console.error("Error:", err);
-      alert("Failed to submit form.");
     }
   };
 
