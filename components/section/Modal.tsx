@@ -24,18 +24,15 @@ export default function CreatePostModal() {
         },
         body: JSON.stringify(data),
       });
-      console.log(response);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
-      console.log("Success:", result);
       setIsOpen(false);
+      return result;
 
       reset();
-    } catch (err) {
-      console.error("Error:", err);
-    }
+    } catch (err) {}
   };
 
   return (

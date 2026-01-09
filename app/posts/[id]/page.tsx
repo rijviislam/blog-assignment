@@ -43,7 +43,6 @@ export default function BlogDetails() {
       const data = await res.json();
       setPost(data);
     } catch (err: any) {
-      console.error("Failed to fetch post:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -77,7 +76,6 @@ export default function BlogDetails() {
 
       <h2 className="text-2xl font-semibold mb-4">Comments</h2>
 
-      {/* Comment component */}
       <Comment comments={post.comments} onCommentChange={fetchPost} />
     </div>
   );

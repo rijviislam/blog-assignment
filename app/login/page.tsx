@@ -39,8 +39,6 @@ export default function LoginPage() {
       });
       const result = await response.json();
 
-      console.log(result);
-
       if (response.ok) {
         setMessage("Login successful! Redirecting...");
 
@@ -54,7 +52,7 @@ export default function LoginPage() {
         }, 2000);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
   return (

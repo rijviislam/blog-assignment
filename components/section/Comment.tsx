@@ -2,6 +2,7 @@
 import { useUser } from "@/context/UserContext";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 interface User {
   id: number;
@@ -22,6 +23,10 @@ interface CommentProps {
   onCommentChange?: () => void;
 }
 
+interface CommentFormData {
+  content: string;
+}
+
 export default function Comment({
   comments = [],
   onCommentChange,
@@ -29,9 +34,16 @@ export default function Comment({
   const params = useParams();
   const { user, token } = useUser();
   const postId = params.id;
-  const [commentContent, setCommentContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CommentFormData>();
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -40,10 +52,9 @@ export default function Comment({
       .toUpperCase()} ${date.getFullYear()}`;
   };
 
-  const handleCommentSubmit = async () => {
+  const onSubmit = async (data: CommentFormData) => {
     if (!user || !token) {
       console.error("User not authenticated");
-      alert("Please log in to post a comment");
       return;
     }
 
@@ -56,7 +67,7 @@ export default function Comment({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ content: commentContent }),
+        body: JSON.stringify({ content: data.content }),
       });
 
       if (!res.ok) {
@@ -66,20 +77,16 @@ export default function Comment({
         throw new Error(errorData.message || "Failed to post comment");
       }
 
-      const data = await res.json();
+      reset();
 
-      setCommentContent("");
-      alert("Comment posted successfully!");
-
-      // Refresh the page or call callback to reload comments
       if (onCommentChange) {
         onCommentChange();
       } else {
         window.location.reload();
       }
-    } catch (err: any) {
-      console.error("Failed to post comment:", err);
-      alert(err.message || "Failed to post comment");
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("Unknown error");
+      console.error("Failed to post comment:", error);
     } finally {
       setSubmitting(false);
     }
@@ -87,11 +94,6 @@ export default function Comment({
 
   const handleDeleteComment = async (commentId: number) => {
     if (!token) {
-      alert("Please log in to delete comments");
-      return;
-    }
-
-    if (!confirm("Are you sure you want to delete this comment?")) {
       return;
     }
 
@@ -112,17 +114,14 @@ export default function Comment({
         throw new Error(errorData.message || "Failed to delete comment");
       }
 
-      alert("Comment deleted successfully!");
-
-      // Refresh the page or call callback to reload comments
       if (onCommentChange) {
         onCommentChange();
       } else {
         window.location.reload();
       }
-    } catch (err: any) {
-      console.error("Failed to delete comment:", err);
-      alert(err.message || "Failed to delete comment");
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("Unknown error");
+      console.error("Failed to delete comment:", error);
     } finally {
       setDeletingId(null);
     }
@@ -130,30 +129,43 @@ export default function Comment({
 
   return (
     <div>
-      {/* Comment Input */}
       {user && token ? (
-        <div className="mb-6 flex flex-col gap-2">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="mb-6 flex flex-col gap-2"
+        >
           <textarea
-            className="border rounded p-2 w-full resize-none"
+            {...register("content", {
+              required: "Comment cannot be empty",
+              minLength: {
+                value: 1,
+                message: "Comment must be at least 1 character",
+              },
+              maxLength: {
+                value: 500,
+                message: "Comment cannot exceed 500 characters",
+              },
+            })}
+            className="border rounded p-2 w-full resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
             rows={3}
             placeholder="Write a comment..."
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
             disabled={submitting}
           />
+          {errors.content && (
+            <p className="text-red-500 text-sm">{errors.content.message}</p>
+          )}
           <button
-            onClick={handleCommentSubmit}
+            type="submit"
             className="bg-purple-500 text-white cursor-pointer px-4 py-2 rounded hover:bg-purple-600 disabled:opacity-50"
-            disabled={submitting || !commentContent.trim()}
+            disabled={submitting}
           >
             {submitting ? "Posting..." : "Post Comment"}
           </button>
-        </div>
+        </form>
       ) : (
         <p className="mb-6 text-gray-500">Please log in to post a comment.</p>
       )}
 
-      {/* Comments List */}
       {comments.length === 0 ? (
         <p className="text-gray-500">No comments yet.</p>
       ) : (
@@ -169,12 +181,11 @@ export default function Comment({
                   </small>
                 </div>
 
-                {/* Delete button - only show if current user is the comment author */}
                 {user && user.id === c.user_id && (
                   <button
                     onClick={() => handleDeleteComment(c.id)}
                     disabled={deletingId === c.id}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
                   >
                     {deletingId === c.id ? "Deleting..." : "Delete"}
                   </button>

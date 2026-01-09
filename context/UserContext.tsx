@@ -67,7 +67,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const data = await res.json();
 
       if (res.ok) {
-        console.log(data.message);
         setUser(null);
         setToken(null);
         localStorage.removeItem("token");
