@@ -1,5 +1,6 @@
 "use client";
 
+import Comment from "@/components/section/Comment";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -34,6 +35,7 @@ export default function BlogDetails() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // FETCH POST
   useEffect(() => {
     if (!postId) return;
 
@@ -54,17 +56,17 @@ export default function BlogDetails() {
     fetchPost();
   }, [postId]);
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
-  if (error)
-    return <div className="text-center py-20 text-red-500">{error}</div>;
-  if (!post) return <div className="text-center py-20">Post not found.</div>;
-
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return `${date.getDate()} ${date
       .toLocaleString("en-US", { month: "long" })
       .toUpperCase()} ${date.getFullYear()}`;
   };
+
+  if (loading) return <div className="text-center py-20">Loading...</div>;
+  if (error)
+    return <div className="text-center py-20 text-red-500">{error}</div>;
+  if (!post) return <div className="text-center py-20">Post not found.</div>;
 
   return (
     <div className="max-w-3xl mx-auto py-8 px-4">
@@ -75,6 +77,9 @@ export default function BlogDetails() {
       <p className="mb-8">{post.content}</p>
 
       <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+
+      <Comment />
+
       {post.comments.length === 0 && <p>No comments yet.</p>}
       <ul>
         {post.comments.map((c) => (

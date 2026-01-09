@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/context/UserContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -21,7 +22,8 @@ interface Blog {
 
 export default function BlogGrid() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // loading state
+  const [loading, setLoading] = useState<boolean>(true);
+  const { user } = useUser();
 
   const fetchPosts = async () => {
     try {
@@ -61,26 +63,30 @@ export default function BlogGrid() {
   return (
     <div className="flex justify-center px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-[1200px]">
-        {blogs.map((blog) => (
-          <Link key={blog.id} href={`/posts/${blog.id}`} className="w-full">
-            <Card className="h-[400px] flex flex-col bg-purple-100 overflow-hidden">
-              <CardHeader className="flex flex-col h-full p-4 justify-between">
-                <CardTitle className="text-xl font-bold line-clamp-1 mb-2">
-                  {blog.title}
-                </CardTitle>
+        {blogs.map((blog) => {
+          const href = user ? `/posts/${blog.id}` : `/login`;
 
-                <CardDescription className="text-base mb-2 line-clamp-[12]">
-                  {blog.content}
-                </CardDescription>
+          return (
+            <Link key={blog.id} href={href} className="w-full">
+              <Card className="h-[400px] flex flex-col bg-purple-100 overflow-hidden">
+                <CardHeader className="flex flex-col h-full p-4 justify-between">
+                  <CardTitle className="text-xl font-bold line-clamp-1 mb-2">
+                    {blog.title}
+                  </CardTitle>
 
-                <small className="text-gray-500 mt-2">
-                  By: {blog.user.name} | Posted on:{" "}
-                  {formatDate(blog.created_at)}
-                </small>
-              </CardHeader>
-            </Card>
-          </Link>
-        ))}
+                  <CardDescription className="text-base mb-2 line-clamp-[12]">
+                    {blog.content}
+                  </CardDescription>
+
+                  <small className="text-gray-500 mt-2">
+                    By: {blog.user.name} | Posted on:{" "}
+                    {formatDate(blog.created_at)}
+                  </small>
+                </CardHeader>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

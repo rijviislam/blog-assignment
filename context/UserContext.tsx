@@ -15,6 +15,7 @@ type User = {
 
 type UserContextType = {
   user: User | null;
+  token: string | null;
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
@@ -24,12 +25,15 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+
       const headers: Record<string, string> = { Accept: "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
+      if (storedToken) headers["Authorization"] = `Bearer ${storedToken}`;
 
       const res = await fetch("/api/user", {
         headers,
@@ -43,18 +47,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error("Failed to fetch user:", err);
       setUser(null);
+      setToken(null);
     }
   };
 
   const logout = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const storedToken = localStorage.getItem("token");
       const res = await fetch("/api/logout", {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
+          Authorization: storedToken ? `Bearer ${storedToken}` : "",
         },
         credentials: "include",
       });
@@ -64,6 +69,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (res.ok) {
         console.log(data.message);
         setUser(null);
+        setToken(null);
         localStorage.removeItem("token");
       } else {
         console.error("Logout failed:", data.message);
@@ -78,7 +84,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, fetchUser }}>
+    <UserContext.Provider value={{ user, token, setUser, logout, fetchUser }}>
       {children}
     </UserContext.Provider>
   );
